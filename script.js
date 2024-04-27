@@ -143,7 +143,8 @@ function getBook(id) {
   return data.find((d) => d.id === id);
 }
 
-const book = getBook(2);
+// Destructuring
+const book = getBook(1);
 book;
 
 // const title = book.title;
@@ -159,7 +160,6 @@ const {
   genres,
   hasMovieAdaptation,
 } = book;
-
 console.log(author, title, genres);
 
 // const primaryGenre = genres[0];
@@ -217,7 +217,7 @@ const pagesRange = pages > 1000 ? "over a thousand" : "less than 1000";
 pagesRange;
 console.log(`The book has ${pagesRange} pages`);
 
-// Truethy short circutting
+// Truethy short circuiting and Logical operators, the good and the bad and the buggy
 console.log(true && "some string");
 console.log(false && "some string");
 console.log(hasMovieAdaptation && "This book has a movie");
@@ -226,5 +226,41 @@ console.log(hasMovieAdaptation && "This book has a movie");
 console.log("Jonas" && "Some string");
 console.log(0 && "Some string");
 
-//nolesh koalesson operator, works simimla to OR operator.
+console.log(true || "some string");
+console.log(false || "Some string"); // using || falsy to set default values
+
+// Nullish coalescing operator(Introduced ECMAScript2020) set by standard inovation, works similar to OR operator when setting its value.
 console.log(book.translations.spanish.split("anillos")[0]);
+
+//
+const spanishTranslation = book.translations.spanish || "NOT TRANSLATED";
+spanishTranslation;
+
+// Edge case scenario... bug🐛 can be encounter when setting its value that is falsy.
+console.log(book.reviews.librarything.reviewsCount);
+const countIncorrectly = book.reviews.librarything.reviewsCount || "no data";
+countIncorrectly;
+
+// Solution
+const count = book.reviews.librarything.reviewsCount ?? "no data";
+
+// Other core samples
+const setNull = null;
+const emptyText = "";
+const someRandomNumber = 42;
+
+const valA = setNull ?? "default to A"; // Returns "default to A"
+const valB = emptyText ?? "default to B"; // Returns "" (empty string is not null or undefined)
+const valC = someRandomNumber ?? 0; // Returns 42
+
+console.log(valA);
+console.log(valB);
+console.log(valC);
+
+function calculateReviews(book) {
+  const goodReads = book.reviews?.goodreads?.reviewsCount;
+  // since book's reviewCount is undefined then passing optional chaining to next latter up will prevent any false positives.
+  const librarything = book.reviews?.librarything?.reviewsCount ?? 0;
+  return goodReads + librarything;
+}
+console.log(calculateReviews(book));
