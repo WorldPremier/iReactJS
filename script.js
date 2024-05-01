@@ -66,7 +66,7 @@ const data = [
     publicationDate: "1965-01-01",
     author: "Frank Herbert",
     genres: ["science fiction", "novel", "adventure"],
-    hasMovieAdaptation: true,
+    hasMovieAdaptation: false,
     pages: 658,
     translations: {
       spanish: "",
@@ -142,8 +142,8 @@ function getBooks() {
 function getBook(id) {
   return data.find((d) => d.id === id);
 }
-
-const book = getBook(2);
+// Destructuring
+const book = getBook(1);
 book;
 
 // const title = book.title;
@@ -159,7 +159,6 @@ const {
   genres,
   hasMovieAdaptation,
 } = book;
-
 console.log(author, title, genres);
 
 // const primaryGenre = genres[0];
@@ -192,7 +191,7 @@ updatedBook;
 // console.log(getYear(publicationDate));
 
 // prettier extension wraps the str function to prevent errs and reminder                          /
-// developer can add multiple property. Based on those, we can return something                    /
+// developer can add multiple property. Process to return something                    /
 // (str, a, b) => str.split("-")[0];                                                               /
 // const getYear = (str) => str.split("-")[0]; // function expression                              /
 
@@ -217,7 +216,7 @@ const pagesRange = pages > 1000 ? "over a thousand" : "less than 1000";
 pagesRange;
 console.log(`The book has ${pagesRange} pages`);
 
-// Truethy short circutting
+// Truethy short circuiting and Logical operators, the good the bad and the buggy
 console.log(true && "some string");
 console.log(false && "some string");
 console.log(hasMovieAdaptation && "This book has a movie");
@@ -226,5 +225,114 @@ console.log(hasMovieAdaptation && "This book has a movie");
 console.log("Jonas" && "Some string");
 console.log(0 && "Some string");
 
-//nolesh koalesson operator, works simimla to OR operator.
+console.log(true || "some string");
+console.log(false || "Some string"); // using || falsy to set default values
+
+// Nullish coalescing operator(Introduced ECMAScript2020) set by standard inovation, works similar to OR operator when setting its value.
 console.log(book.translations.spanish.split("anillos")[0]);
+
+//
+const spanishTranslation = book.translations.spanish || "NOT TRANSLATED";
+spanishTranslation;
+
+// Edge case scenario... bug🐛 can be encounter when setting its value that is falsy.
+console.log(book.reviews.librarything.reviewsCount);
+const countIncorrectly = book.reviews.librarything.reviewsCount || "no data";
+countIncorrectly;
+
+// Solution
+const count = book.reviews.librarything.reviewsCount ?? "no data";
+
+// Other core samples
+const setNull = null;
+const emptyText = "";
+const someRandomNumber = 42;
+
+const valA = setNull ?? "default to A"; // Returns "default to A"
+const valB = emptyText ?? "default to B"; // Returns "" (empty string is not null or undefined)
+const valC = someRandomNumber ?? 0; // Returns 42
+
+console.log(valA);
+console.log(valB);
+console.log(valC);
+
+function calculateReviews(book) {
+  const goodReads = book.reviews?.goodreads?.reviewsCount;
+  // since book's reviewCount is undefined then passing optional chaining to next latter up will prevent any false positives.
+  const librarything = book.reviews?.librarything?.reviewsCount ?? 0;
+  return goodReads + librarything;
+}
+console.log(calculateReviews(book));
+
+//**********************************************************PART TWO ARRAY MANIPULATION******************************************************************************* */
+const books = getBooks();
+// books;
+
+// Quick flashback, map will spit out the same length array and return with new functionality embeded.
+// const i = [1, 2, 3, 4, 5].map((el) => el * 2);
+// console.log(i);
+
+// Return title and author from array that does not include other objects.
+// const titles = books.map((book) => book.title);
+// titles;
+
+// const genres = books.map((book) => book.genres);
+// genres;
+
+// const dataBook = books.map((book) => ({
+//   titles: book.title,
+//   author: book.author,
+// }));
+// console.log(dataBook);
+
+const getPages = books.map((book) => ({
+  pages: book.pages,
+}));
+// getPages;
+
+// Filters
+const longBooks = books
+  .filter((book) => book.pages > 500)
+  .filter((book) => book.hasMovieAdaptation);
+longBooks;
+
+// const longBooks = books
+//   .filter((book) => book.pages < 500)
+//   .filter((book) => book.hasMovieAdaptation);
+// longBooks;
+
+// reducers and accumulators
+const addAllPages = books.reduce((acc, book) => acc + book.pages, 0);
+addAllPages;
+// 3-7 = -4
+
+// Sorting, slicing its copy to output new chronological array based on ascending order.
+const arr = [2, 5, 7, 9, 4];
+const arrContainer = arr.slice().sort((a, b) => a - b);
+arrContainer;
+arr;
+
+const sortingAllPages = books.slice().sort((a, b) => a.pages - b.pages);
+sortingAllPages;
+const newBook = {
+  id: 6,
+  title: "Harry Potter and the Chamber of Secrets",
+  author: "J. K. Rowling",
+};
+
+const booksAfterAdd = [...books, newBook];
+booksAfterAdd;
+
+// Adding to an array
+const addBookToOriginBK = [...books, newBook];
+addBookToOriginBK;
+
+// Deleting book index object from array
+const booksAfterDel = addBookToOriginBK.filter((book) => book.id !== 3);
+// booksAfterDel;
+
+// update an array
+const bookUpdate = booksAfterDel.map((book) =>
+  book.id === 1 ? { ...book, pages: 1210 } : book
+);
+bookUpdate;
